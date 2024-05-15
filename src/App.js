@@ -16,6 +16,7 @@ function App() {
       <Router>
         <Routes>
           <Route exact path='/' element={<Home />}> </Route>
+          <Route path='/eventos/:parametro' element={<Home />}> </Route>
           <Route exact path='/login' element={<Login />}> </Route>
           <Route exact path='/novousuario' element={<NovoUsuario />}> </Route>
           <Route exact path='/usuariorecuperarsenha' element={<UsuarioRecuperarSenha />}> </Route>

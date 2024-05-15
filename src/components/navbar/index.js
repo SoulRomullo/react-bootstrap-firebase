@@ -37,7 +37,7 @@ function Navbar() {
                                         <Link className="nav-link " aria-current="page" to="/eventocadastro">Publicar Evento</Link>
                                     </li>
                                     <li className="navbar-nav">
-                                        <Link className="nav-link " aria-current="page" to="">Meus Eventos</Link>
+                                        <Link className="nav-link " aria-current="page" to="/eventos/meus">Meus Eventos</Link>
                                     </li>
                                     <li className="navbar-nav">
                                         <Link className="nav-link " aria-current="page" onClick={() => dispatch({ type: 'LOG_OUT' })}>Sair</Link>
