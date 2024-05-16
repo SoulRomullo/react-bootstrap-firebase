@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import './home.css';
 
-import EventoCard from "../../components/evento-card";
+import EventoCards from "../../components/evento-card";
 import Navbar from '../../components/navbar';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -20,7 +20,7 @@ function Home() {
     const usuarioEmail = useSelector(state => state.usuarioEmail);
 
     useEffect(() => {
-        const listaEventos = async () => {
+        const listaEventosLogado = async () => {
             let q;
             if (parametro) {
                 q = query(collectionRef, where('usuario', '==', usuarioEmail));
@@ -36,20 +36,22 @@ function Home() {
             });
             setEventos(items);
         };
-        listaEventos();
-    }, [parametro, usuarioEmail, collectionRef]);
+        listaEventosLogado();
 
+        
+    }, []);
+    
     const Pesquisa = async () => {
-        const q = query(collectionRef, where('titulo', '>=', pesquisa), where('titulo', '<=', pesquisa + '\uf8ff'));
-        const querySnapshot = await getDocs(q);
-        const items = [];
+            const q = query(collectionRef, where('titulo', '>=', pesquisa),where('titulo', '<=', pesquisa + '\uf8ff'));
+            const querySnapshot = await getDocs(q);
+            const items = [];
+            
+            querySnapshot.forEach((doc) => {
+                items.push({ id: doc.id, ...doc.data() });
+            });
+            setEventos(items);
+        };
 
-        querySnapshot.forEach((doc) => {
-            items.push({ id: doc.id, ...doc.data() });
-        });
-
-        setEventos(items);
-    };
 
     return (
         <>
@@ -71,7 +73,7 @@ function Home() {
             <div className="container-fluid">
                 <div className="row p-3">
                     {
-                        eventos.map(item => <EventoCard key={item.id} id={item.id} img={item.foto} titulo={item.titulo} detalhes={item.detalhes} visualizacoes={item.visualizacoes} />)
+                        eventos.map(item => <EventoCards key={item.id} id={item.id} img={item.foto} titulo={item.titulo} detalhes={item.detalhes} visualizacoes={item.visualizacoes} />)
                     }
                 </div>
             </div>

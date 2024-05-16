@@ -9,6 +9,7 @@ import Login from './view/login/';
 import NovoUsuario from './view/usuario-novo';
 import UsuarioRecuperarSenha from './view/usuario-recuperar-senha';
 import EventoCadastro from "./view/evento-cadastro";
+import EventoDetalhes from './view/evento-detalhes';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route exact path='/novousuario' element={<NovoUsuario />}> </Route>
           <Route exact path='/usuariorecuperarsenha' element={<UsuarioRecuperarSenha />}> </Route>
           <Route exact path='/eventocadastro' element={<EventoCadastro />}> </Route>
+          <Route path='/eventodetalhes/:id' element={<EventoDetalhes />}> </Route>
         </Routes>
       </Router>
     </Provider>

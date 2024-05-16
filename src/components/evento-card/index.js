@@ -11,13 +11,11 @@ function EventoCard({ id, img, titulo, detalhes, visualizacoes }) {
     const [ urlImagem, setUrlImagem ] = useState();
     
     useEffect(() => {
-        
-        const db = getStorage(firebase)
-        const imgRef = ref(db, `imagens/${img}`)
-        const setLink = getDownloadURL(imgRef)
-        
+
         const linkImg = async () => {
-            const url =  await setLink; 
+            const db = getStorage(firebase)
+            const imgRef = ref(db, `imagens/${img}`)
+            const url =  await getDownloadURL(imgRef);
             setUrlImagem(url)
         };
         
@@ -26,7 +24,7 @@ function EventoCard({ id, img, titulo, detalhes, visualizacoes }) {
     }, []);
     
     return (
-        <div className='col-md-3 col-sm-12'>
+        <div className='col-md-3 col-sm-12 mb-3'>
             <img src={urlImagem} className='card-img-top img-cartao' alt='Imagem do Evento' />
             
             <div className='card-body'>
