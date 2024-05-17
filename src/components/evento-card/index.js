@@ -21,7 +21,7 @@ function EventoCard({ id, img, titulo, detalhes, visualizacoes }) {
         
         linkImg()
 
-    }, []);
+    }, [img]);
     
     return (
         <div className='col-md-3 col-sm-12 mb-3'>

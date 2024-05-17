@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import './home.css';
 
-import EventoCards from "../../components/evento-card";
+import EventoCard from "../../components/evento-card";
 import Navbar from '../../components/navbar';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -13,44 +13,78 @@ function Home() {
     const [eventos, setEventos] = useState([]);
     const [pesquisa, setPesquisa] = useState('');
 
+    const [pesquisaUsuario, setPesquisaUsuario] = useState(1);
+
     const db = getFirestore(firebase);
     const collectionRef = collection(db, 'eventos');
 
     const { parametro } = useParams();
     const usuarioEmail = useSelector(state => state.usuarioEmail);
 
+
+    const pesquisaEvento = async () => {
+        let usuario;
+        if (parametro) {
+            usuario = query(collectionRef, where('usuario', '==', usuarioEmail), where('titulo', '>=', pesquisa), where('titulo', '<=', pesquisa + '\uf8ff'))
+            const querySnapshot = await getDocs(usuario);
+            const items = [];
+
+            querySnapshot.forEach((doc) => {
+                items.push({ id: doc.id, ...doc.data() });
+            });
+
+            setEventos(items);
+
+        } else {
+            const q = query(collectionRef, where('titulo', '>=', pesquisa), where('titulo', '<=', pesquisa + '\uf8ff'));
+            const querySnapshot = await getDocs(q);
+            const items = [];
+
+            querySnapshot.forEach((doc) => {
+                items.push({ id: doc.id, ...doc.data() });
+            });
+
+            setEventos(items);
+        }
+
+    };
+
+
     useEffect(() => {
+
         const listaEventosLogado = async () => {
             let q;
             if (parametro) {
                 q = query(collectionRef, where('usuario', '==', usuarioEmail));
+                const querySnapshot = await getDocs(q);
+                const items = [];
+
+                querySnapshot.forEach((doc) => {
+                    items.push({ id: doc.id, ...doc.data() });
+                });
+                setEventos(items);
+                setPesquisaUsuario(0)
             } else {
-                q = collectionRef; // Consulta sem filtro
+                q = collectionRef;
             }
+            
+            try {
+                const querySnapshot = await getDocs(q);
+                const items = [];
 
-            const querySnapshot = await getDocs(q);
-            const items = [];
-
-            querySnapshot.forEach((doc) => {
-                items.push({ id: doc.id, ...doc.data() });
-            });
-            setEventos(items);
+                querySnapshot.forEach((doc) => {
+                    items.push({ id: doc.id, ...doc.data() });
+                });
+                setEventos(items);
+            } catch (error) {
+                console.log(error, 'Erro ao buscar Eventos')
+            }
         };
+
         listaEventosLogado();
 
-        
-    }, []);
-    
-    const Pesquisa = async () => {
-            const q = query(collectionRef, where('titulo', '>=', pesquisa),where('titulo', '<=', pesquisa + '\uf8ff'));
-            const querySnapshot = await getDocs(q);
-            const items = [];
-            
-            querySnapshot.forEach((doc) => {
-                items.push({ id: doc.id, ...doc.data() });
-            });
-            setEventos(items);
-        };
+    }, [parametro, usuarioEmail]);
+
 
 
     return (
@@ -59,21 +93,36 @@ function Home() {
 
             <div className="row p-3">
 
-                <h2 className="text-center p-5">Eventos Publicados</h2>
+                {
+                    pesquisaUsuario ?
+                    <h2 className="text-center p-5">Eventos Publicados</h2>
+                    :
+                    <h2 className="text-center p-5">Meus Eventos Publicados</h2>
 
-                <div className="pesquisa">
-                    <input onChange={(e) => setPesquisa(e.target.value)} type="text" className="form-control text-center box" placeholder="Pesquisar evento pelo título..." />
-                </div>
+                }
 
-                <div className="mt-3 text-center">
-                    <button onClick={Pesquisa} type="button" className="btn btn-primary ">Pesquisar</button>
-                </div>
+                {
+                    pesquisaUsuario ?
+                        <div className="pesquisa">
+                            <input onChange={(e) => setPesquisa(e.target.value)} type="text" className="form-control text-center box" placeholder="Pesquisar evento pelo título..." />
+                        </div>
+                        : ''
+                }
+
+                {
+                    pesquisaUsuario ?
+                        <div className="mt-3 text-center">
+                            <button onClick={pesquisaEvento} type="button" className="btn btn-primary ">Pesquisar</button>
+                        </div>
+                        : ''
+                }
+
             </div>
 
             <div className="container-fluid">
                 <div className="row p-3">
                     {
-                        eventos.map(item => <EventoCards key={item.id} id={item.id} img={item.foto} titulo={item.titulo} detalhes={item.detalhes} visualizacoes={item.visualizacoes} />)
+                        eventos.map(item => <EventoCard key={item.id} id={item.id} img={item.foto} titulo={item.titulo} detalhes={item.detalhes} visualizacoes={item.visualizacoes} />)
                     }
                 </div>
             </div>
