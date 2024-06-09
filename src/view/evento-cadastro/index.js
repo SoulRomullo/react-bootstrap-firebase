@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from 'react-redux';
 import './evento-cadastro.css';
-
+import { Navigate } from "react-router-dom";
 import Navbar from '../../components/navbar'
 
 import firebase from '../../config/firebase'
@@ -168,6 +168,10 @@ function EventoCadastro() {
                                 carregando > 0 ?
                                     <div class="spinner-border text-danger mx-auto" role="status"><span class="visually-hidden">Loading...</span></div> :
                                     <button type="button" onClick={id ? atualizar : cadastrar} className="btn btn-lg btn-block mt-3 mb-3 btn-cadastro">{id ? 'Atualizar Evento' : 'Publicar Evento'}</button>
+                            }
+
+                            {
+                                setCarregando === 0 ? <Navigate to='/' /> : ''
                             }
                         </div>
                     </div>
